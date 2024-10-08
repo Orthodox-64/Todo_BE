@@ -5,7 +5,7 @@ const { default: mongoose } = require("mongoose");
 const JWT_SECRET="sachinxdxd";
 const app=express();
 app.use(express.json());
-mongoose.connect("mongodb+srv://sachinprogramming62:H3lEBoO8FArmabQs@cluster0.rpgov.mongodb.net/todo-sachin-2");
+mongoose.connect("");
 app.post("/signup",async function(req,res){
     const email=req.body.email;
     const password=req.body.password;
