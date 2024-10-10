@@ -1,4 +1,5 @@
 const express=require("express");
+const {z}=require("zod");
 const bcrypt=require("bcrypt");
 const {UserModel,TodoModel}=require("./db");
 const jwt=require("jsonwebtoken");
@@ -8,10 +9,22 @@ const app=express();
 app.use(express.json());
 mongoose.connect("");
 app.post("/signup",async function(req,res){
+    const requirebody=z.object({
+        email:z.string().min(4).max(100).email(),
+        name:z.string().min(3).max(100),
+        password:z.string().min(5).max(99)
+    })
+    const parseddata=requirebody.parse(req.body);
+    const parseddatawithsucces=requirebody.safeParse(req.body);
     const email=req.body.email;
     const password=req.body.password;
     const name=req.body.name;
     const hashedpassword=bcrypt(password,5);
+    if(!parseddatawithsucces){
+       res.json({
+         msg:"Invalid input",
+         error:parseddatawithsucces.error
+       })
     try{
     await UserModel.create({
         email:email,
@@ -25,7 +38,7 @@ app.post("/signup",async function(req,res){
     res.json({
         msg:"You are logged in"
     })
-})
+}}) 
 
 app.post("/signin",async function(req,res){
     const email=req.body.email;
