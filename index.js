@@ -1,4 +1,5 @@
 const express=require("express");
+const bcrypt=require("bcrypt");
 const {UserModel,TodoModel}=require("./db");
 const jwt=require("jsonwebtoken");
 const { default: mongoose } = require("mongoose");
@@ -10,13 +11,17 @@ app.post("/signup",async function(req,res){
     const email=req.body.email;
     const password=req.body.password;
     const name=req.body.name;
-
+    const hashedpassword=bcrypt(password,5);
+    try{
     await UserModel.create({
         email:email,
-        password:password,
+        password:hashedpassword,
         name:name
     })
-
+    }
+    catch(e){
+        console.log("error occured");
+    }
     res.json({
         msg:"You are logged in"
     })
@@ -25,11 +30,11 @@ app.post("/signup",async function(req,res){
 app.post("/signin",async function(req,res){
     const email=req.body.email;
     const password=req.body.password;
-
     const user= await UserModel.findOne({
         email:email,
         password:password
     })
+    const passwordmatch=bcrypt.compare(password,user.password);
     if(user){
         const token=jwt.sign({
             id:user._id.toString()
