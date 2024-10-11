@@ -19,7 +19,7 @@ app.post("/signup",async function(req,res){
     const email=req.body.email;
     const password=req.body.password;
     const name=req.body.name;
-    const hashedpassword=bcrypt(password,5);
+    const hashedpassword=bcrypt.hash(password,5);
     if(!parseddatawithsucces){
        res.json({
          msg:"Invalid input",
